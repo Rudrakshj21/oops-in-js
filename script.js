@@ -423,20 +423,29 @@ max.introduce();
 max.calcAge();
 console.log(max);
 */
-
+/*
 class Account {
   constructor(owner, currency, pin) {
     this.owner = owner;
     this.currency = currency;
+    // protected - not truly private
     this.pin = pin;
-    this.movements = [];
+    this._movements = [];
     this.local = navigator.language;
 
     console.log(`thanks for opening an account,${owner}`);
   }
+
+  getMovements() {
+    return this._movements;
+  }
+
+  getPin() {
+    return this._pin;
+  }
   // public interface of our objects (api)
   deposit(value) {
-    this.movements.push(value);
+    this._movements.push(value);
   }
   // since wwe are withdrawing negative value
   // it masks the fact that it takes -ve value
@@ -445,12 +454,13 @@ class Account {
   }
 
   // example
-  approveLoan(val) {
+  // protected method
+  _approveLoan(val) {
     return true;
   }
 
   requestLoan(value) {
-    if (this.approveLoan(value)) {
+    if (this._approveLoan(value)) {
       this.deposit(value);
       console.log('loan approved');
     } else {
@@ -477,5 +487,75 @@ console.log(acc1);
 // we are able to access this
 // in real world this should not occur
 // this is why we need data encapsulation and data privacy
-acc1.approveLoan();
+acc1._approveLoan();
 console.log(acc1.pin);
+
+acc1.getMovements();
+
+*/
+// different class fields : -  public/private fields , public/private methods
+class Account {
+  // public fields (attached to each instance and not the prototype)
+  local = navigator.language;
+
+  // private fields (makes properties truly not accessible from outside)
+  #movements = [];
+  #pin; // empty field since we cannot set private fields inside a constructor
+  // for every instance it will be set as property and its value will be undefined
+  constructor(owner, currency, pin) {
+    this.owner = owner;
+    this.currency = currency;
+    // now for each instance the pin value will be changed from undefined to the parameter's pin value
+    this.#pin = pin;
+    console.log(`thanks for opening an account,${owner}`);
+  }
+
+  // these are nothing but public methods
+  getMovements() {
+    return this.#movements;
+  }
+
+  getPin() {
+    return this._pin;
+  }
+  deposit(value) {
+    this.#movements.push(value);
+  }
+  withdraw(value) {
+    this.deposit(-value);
+  }
+
+  requestLoan(value) {
+    if (this.#approveLoan(value)) {
+      this.deposit(value);
+      console.log('loan approved');
+    } else {
+      console.log('loan cannot be approved');
+    }
+  }
+
+  // private methods (useful for hiding implementation details from outside)
+  #approveLoan(val) {
+    return true;
+  }
+
+  //static fn is  present on the class itself
+  static helper() {
+    console.log('e');
+  }
+}
+const acc1 = new Account('Jonas', 'EUR', 1111);
+
+console.log(acc1);
+acc1.withdraw(200);
+
+console.log(acc1.getMovements()); // no error as getMovements is accessible which
+// itself is inside a class when accessing the movements property is an example of public api
+
+// console.log(acc1.#movements); // error trying to access private fields outside of the class
+
+// console.log(acc1.#pin);
+
+acc1.requestLoan(300);
+
+// console.log(acc1.#approveLoan()); cannot access since private method
