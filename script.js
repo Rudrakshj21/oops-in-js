@@ -623,6 +623,15 @@ class Car {
     console.log(`${this.make} is running at ${this.speed}km/h `);
     return this;
   }
+  get speedUS() {
+    console.log('in get speedUs');
+    return this.speed / 1.6;
+  }
+
+  set speedUS(newSpeed) {
+    console.log('in set speedUs');
+    this.speed = newSpeed;
+  }
 }
 
 class EV extends Car {
@@ -652,3 +661,8 @@ console.log(rivian);
 console.log(rivian.chargeBattery(39));
 console.log(rivian.accelerate());
 console.log(rivian.chargeBattery(40).accelerate().accelerate().brake());
+console.log(rivian.speedUS);
+
+rivian.speedUS = 210;
+
+console.log(rivian);
