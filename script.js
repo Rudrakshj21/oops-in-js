@@ -520,23 +520,37 @@ class Account {
   }
   deposit(value) {
     this.#movements.push(value);
+    return this;
   }
   withdraw(value) {
     this.deposit(-value);
+    return this;
   }
 
   requestLoan(value) {
+    console.log(`in request loan ${value}`);
     if (this.#approveLoan(value)) {
       this.deposit(value);
       console.log('loan approved');
+      return this;
     } else {
       console.log('loan cannot be approved');
+      return this;
     }
   }
 
   // private methods (useful for hiding implementation details from outside)
   #approveLoan(val) {
-    return true;
+    const balance = this.#movements.reduce((sumBalance, currentTransaction) => {
+      sumBalance += currentTransaction;
+      return sumBalance;
+    }, 0);
+    console.log(`total bal : ${balance} , request loan : ${val}`);
+    if (balance >= val) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   //static fn is  present on the class itself
@@ -547,7 +561,8 @@ class Account {
 const acc1 = new Account('Jonas', 'EUR', 1111);
 
 console.log(acc1);
-acc1.withdraw(200);
+// acc1.withdraw(200);
+acc1.deposit(300);
 
 console.log(acc1.getMovements()); // no error as getMovements is accessible which
 // itself is inside a class when accessing the movements property is an example of public api
@@ -559,3 +574,27 @@ console.log(acc1.getMovements()); // no error as getMovements is accessible whic
 acc1.requestLoan(300);
 
 // console.log(acc1.#approveLoan()); cannot access since private method
+
+// chaining normal methods
+/*
+let nums = [1, 2, 3, 4];
+
+nums = nums
+  .filter(num => {
+    return num % 2 == 1;
+  })
+  .map(num => {
+    return num * 2;
+  })
+  .reduce((result, num) => {
+    return (result = result - num);
+  });
+console.log(nums);
+*/
+
+// chaining instance methods
+
+// console.log(acc1.withdraw(300).deposit(30).withdraw(20).requestLoan(2500));
+
+console.log(acc1.requestLoan(350));
+console.log(acc1.requestLoan(300));
