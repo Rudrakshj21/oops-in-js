@@ -494,6 +494,8 @@ acc1.getMovements();
 
 */
 // different class fields : -  public/private fields , public/private methods
+
+/*
 class Account {
   // public fields (attached to each instance and not the prototype)
   local = navigator.language;
@@ -575,6 +577,17 @@ acc1.requestLoan(300);
 
 // console.log(acc1.#approveLoan()); cannot access since private method
 
+
+// chaining instance methods
+
+// console.log(acc1.withdraw(300).deposit(30).withdraw(20).requestLoan(2500));
+
+
+
+console.log(acc1.requestLoan(350));
+console.log(acc1.requestLoan(300));
+*/
+
 // chaining normal methods
 /*
 let nums = [1, 2, 3, 4];
@@ -592,9 +605,50 @@ nums = nums
 console.log(nums);
 */
 
-// chaining instance methods
+// coding challenge 5
+class Car {
+  constructor(make, speed) {
+    this.make = make;
+    this.speed = speed;
+  }
+  accelerate() {
+    this.speed += 10;
 
-// console.log(acc1.withdraw(300).deposit(30).withdraw(20).requestLoan(2500));
+    console.log(`${this.make} is running at ${this.speed}km/h `);
+    return this;
+  }
+  brake() {
+    this.speed -= 5;
 
-console.log(acc1.requestLoan(350));
-console.log(acc1.requestLoan(300));
+    console.log(`${this.make} is running at ${this.speed}km/h `);
+    return this;
+  }
+}
+
+class EV extends Car {
+  #charge;
+  constructor(make, speed, charge) {
+    super(make, speed);
+    this.#charge = charge;
+  }
+  chargeBattery(chargeTo) {
+    this.#charge = chargeTo;
+    return this;
+  }
+  accelerate() {
+    this.speed += 10;
+    this.#charge--;
+    console.log(
+      `${this.make} is running at ${this.speed}km/h. current charge ${
+        this.#charge
+      }%`
+    );
+    return this;
+  }
+}
+const rivian = new EV('rivian', 120, 23);
+
+console.log(rivian);
+console.log(rivian.chargeBattery(39));
+console.log(rivian.accelerate());
+console.log(rivian.chargeBattery(40).accelerate().accelerate().brake());
